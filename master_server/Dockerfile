@@ -1,9 +1,9 @@
-FROM node:slim as builder
+FROM node:slim AS builder
 
 WORKDIR /app
 
 COPY package*.json ./
-COPY tsconfig.json ./
+
 
 RUN npm install
 
