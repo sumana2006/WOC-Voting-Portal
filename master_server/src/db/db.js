@@ -1,6 +1,12 @@
 import Sequelize from "sequelize";
 
-const sequelize = new Sequelize('postgres://postgres:admin@localhost:5432/postgres');
+// const sequelize = new Sequelize('postgres://postgres:admin@localhost:5432/postgres');
+
+export const sequelize = new Sequelize('postgres', 'postgres', 'admin', {
+    host: 'localhost',
+    dialect: 'postgres',
+    logging: false,
+});
 
 export async function connectDB() {
     try {
