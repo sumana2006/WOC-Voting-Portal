@@ -1,9 +1,5 @@
-import { Sequelize, DataTypes } from "sequelize"
-import { connectDB, sequelize } from "../db/db.js";
-
-connectDB();
-
-
+import { DataTypes } from "sequelize"
+import { sequelize } from "../db/db.js";
 
 export const Voter = sequelize.define(
     'Voter',
