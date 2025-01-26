@@ -1,13 +1,12 @@
 FROM node:slim AS builder
-
 WORKDIR /app
 
 COPY package*.json ./
 
-
 RUN npm install
 
-COPY src ./src
-COPY .env ./.env
+COPY . .
 
-ENTRYPOINT [ "npm", "run", "dev" ]
+EXPOSE 3000
+
+CMD ["npm", "run", "dev"]
