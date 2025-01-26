@@ -1,8 +1,8 @@
 import { DataTypes } from "sequelize"
 import { sequelize } from "../db/db.js";
 
-export const EC_Student = sequelize.define(
-    'EC_Student',
+export const Candidate = sequelize.define(
+    'Candidate',
     {
         ID: {
             type: DataTypes.STRING,
@@ -25,16 +25,21 @@ export const EC_Student = sequelize.define(
             unique: true,
         },
         verfiedByStudent: {
+            type: DataTypes.STRING,
             references: {
                 model: "EC_Student",
                 key: "ecID",
             },
         },
         verifiedByStaff:{
+            type: DataTypes.STRING,
             references: {
                 model: "EC_Staff",
                 key: "id",
             },
         }
+    },
+    {
+        tableName: 'Candidate'
     }
 )

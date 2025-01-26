@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../db/db.js";
 
-const EVM = sequelize.define("evm", {
+const EVM = sequelize.define("EVM", {
     public_key: {
         type: DataTypes.STRING,
         primaryKey: true,
@@ -31,11 +31,14 @@ const EVM = sequelize.define("evm", {
         allowNull: false, 
     },
     verifiedByStaff: {
+        type: DataTypes.STRING,
         references: {
             model: "EC_Staff",
             key: "id",
         },
     }
+},{
+    tableName: 'EVM'
 });
 
 export default EVM;

@@ -14,13 +14,17 @@ export const EC_Student = sequelize.define(
             allowNull: false,
         },
         contact: {
-            type: DataTypes.NUMBER,
+            type: DataTypes.INTEGER,
         },
-        verifiedByStaff:{
+        verifiedByStaff: {
+            type: DataTypes.STRING,
             references: {
                 model: "EC_Staff",
                 key: "id",
             },
         }
+    },
+    {
+        tableName: "EC_Student", 
     }
 )

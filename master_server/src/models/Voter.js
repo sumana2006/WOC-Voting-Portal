@@ -17,16 +17,21 @@ export const Voter = sequelize.define(
             type: DataTypes.STRING,
         },
         verfiedByStudent: {
+            type: DataTypes.STRING,
             references: {
                 model: "EC_Student",
                 key: "ecID",
             },
         },
         verifiedByStaff:{
+            type: DataTypes.STRING,
             references: {
                 model: "EC_Staff",
                 key: "id",
             },
         }
+    },
+    {
+        tableName: 'Voter'
     }
 )
