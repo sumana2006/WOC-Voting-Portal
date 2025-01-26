@@ -11,5 +11,7 @@ app.use(bodyParser.json());
 // cors
 
 // mount routes
-
+app.get('/', (req, res) => {
+    res.send('Hello World bye');
+  });
 export default app;

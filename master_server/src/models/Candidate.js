@@ -1,10 +1,10 @@
 import { DataTypes } from "sequelize"
 import { sequelize } from "../db/db.js";
 
-export const Voter = sequelize.define(
-    'Voter',
+export const Candidate = sequelize.define(
+    'Candidate',
     {
-        voterId: {
+        ID: {
             type: DataTypes.STRING,
             allowNull: false,
             primaryKey: true,
@@ -13,8 +13,16 @@ export const Voter = sequelize.define(
             type: DataTypes.STRING,
             allowNull: false,
         },
-        biometricData: {
+        contact: {
+            type: DataTypes.NUMBER,
+        },
+        position: {
+            type: DataTypes.ENUM("1", "2"), //TODO: Add correct positions
+            allowNull: false,
+        },
+        basis: {
             type: DataTypes.STRING,
+            unique: true,
         },
         verfiedByStudent: {
             type: DataTypes.STRING,
@@ -32,6 +40,6 @@ export const Voter = sequelize.define(
         }
     },
     {
-        tableName: 'Voter'
+        tableName: 'Candidate'
     }
 )
