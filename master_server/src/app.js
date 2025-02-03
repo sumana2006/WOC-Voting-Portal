@@ -2,6 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 
 // import routes
+import registrationRouter from "./routes/registration.js"
 
 const app = express();
 
@@ -14,4 +15,7 @@ app.use(bodyParser.json());
 app.get('/', (req, res) => {
     res.send('Hello World bye');
   });
+
+app.use("/api/register",registrationRouter)
+
 export default app;
