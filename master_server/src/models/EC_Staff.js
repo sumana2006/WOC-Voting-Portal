@@ -9,8 +9,21 @@ export const EC_Staff = sequelize.define(
             allowNull: false,
             primaryKey: true,
         },
-        
-    },{
-        tableName: 'EC_Staff'
+        name: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        biometric_right: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        biometric_left: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+    },
+    {
+        tableName: 'EC_Staff',
+        timestamps: false,
     }
 )
