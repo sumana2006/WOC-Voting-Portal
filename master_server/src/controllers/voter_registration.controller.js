@@ -60,8 +60,8 @@ export const handleVoterRegistration = async (req, res) => {
         const voter = await Voter.create({
             voterId: voterId,
             name: name,
-            biometricrightthumb: encryptedRightThumb,
-            biometricleftthumb: encryptedLeftThumb,
+            biometric_right: encryptedRightThumb,
+            biometric_left: encryptedLeftThumb,
             verfiedByStudent: verifiedVolunteer.id,
             verifiedByStaff: verifiedStaff.id
         });
