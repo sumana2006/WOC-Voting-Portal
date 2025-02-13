@@ -1,10 +1,10 @@
 import { DataTypes } from "sequelize"
 import { sequelize } from "../db/db.js";
 
-export const Voter = sequelize.define(
-    'Voter',
+export const EC_Volunteer = sequelize.define(
+    'EC_Volunteer',
     {
-        voterId: {
+        id: {
             type: DataTypes.STRING,
             allowNull: false,
             primaryKey: true,
@@ -13,20 +13,18 @@ export const Voter = sequelize.define(
             type: DataTypes.STRING,
             allowNull: false,
         },
+        contact: {
+            type: DataTypes.STRING,
+        },
         biometric_right: {
             type: DataTypes.STRING,
+            allowNull: false,
         },
         biometric_left: {
             type: DataTypes.STRING,
+            allowNull: false,
         },
-        verfiedByStudent: {
-            type: DataTypes.STRING,
-            references: {
-                model: "EC_Volunteer",
-                key: "id",
-            },
-        },
-        verifiedByStaff:{
+        verifiedByStaff: {
             type: DataTypes.STRING,
             references: {
                 model: "EC_Staff",
@@ -35,6 +33,6 @@ export const Voter = sequelize.define(
         }
     },
     {
-        tableName: 'Voter'
+        tableName: "EC_Volunteer", 
     }
 )

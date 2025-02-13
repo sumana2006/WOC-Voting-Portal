@@ -4,7 +4,7 @@ import { sequelize } from "../db/db.js";
 export const Candidate = sequelize.define(
     'Candidate',
     {
-        ID: {
+        id: {
             type: DataTypes.STRING,
             allowNull: false,
             primaryKey: true,
@@ -28,7 +28,7 @@ export const Candidate = sequelize.define(
             type: DataTypes.STRING,
             references: {
                 model: "EC_Student",
-                key: "ecID",
+                key: "id",
             },
         },
         verifiedByStaff:{
