@@ -19,7 +19,7 @@ export const Voter = sequelize.define(
         biometric_left: {
             type: DataTypes.STRING,
         },
-        verfiedByStudent: {
+        verfiedByVolunteer: {
             type: DataTypes.STRING,
             references: {
                 model: "EC_Volunteer",
