@@ -2,6 +2,7 @@ import { EC_Staff } from "../models/EC_Staff.js";
 import { EC_Volunteer } from "../models/EC_Volunteer.js";
 import { encryptData, decryptData } from "../utils/crypto.utils.js";
 
+// take admin biometrics
 export const handleEcStaffRegistration = async (req,res) => {
     const {id, name, biometric} = req.body;
     try {
