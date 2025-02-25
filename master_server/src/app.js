@@ -10,6 +10,7 @@ const app = express();
 
 // use middlewares
 app.use(bodyParser.json());
+app.use(cookieParser());
 
 // cors
 
