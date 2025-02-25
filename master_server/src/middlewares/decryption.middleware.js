@@ -1,4 +1,4 @@
-import { decryptData } from "../utils/crypto.utils.js";
+import { decryptFromEVM } from "../utils/crypto.utils.js";
 
 export const decryptMiddleware = (req, res, next) => {
   try {
