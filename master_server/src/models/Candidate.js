@@ -18,7 +18,7 @@ export const Candidate = sequelize.define(
             type: DataTypes.NUMBER,
         },
         positions: {
-            type: DataTypes.ARRAY(DataTypes.ENUM(...Object.values(POSITIONS))), // Array of positions
+            type: DataTypes.ENUM(...Object.values(POSITIONS)),
             allowNull: false,
         },
         basis: {
