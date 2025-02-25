@@ -2,6 +2,8 @@ import { Voter } from "../models/Voter.js";
 import { Commitment } from "../models/Commitments.js"
 import { decryptData, encryptForEVM } from "../utils/crypto.utils.js";
 import crypto from "crypto";
+import { fetchCandidateInfo } from "../utils/candidate.utils.js";
+
 
 // validate user, send session key [controller]
 /**@master_server */
@@ -19,11 +21,12 @@ import crypto from "crypto";
  * respond with encryption to the frontend
  */
 
-const sessionStore = new Map();
+const sessionStore = new Map(); // alternate: External Data Structure like Redis
 
 export const handleVoterSession = async (req, res) => {
     try {
         const { voterId, biometric_left, biometric_right, evmId } = req.decryptedData;
+
         const voter = await Voter.findOne({ where: { voterId } });
         if (!voter) {
             return res.status(404).json({ message: "Voter not found" });
@@ -40,22 +43,35 @@ export const handleVoterSession = async (req, res) => {
             return res.status(403).json({ message: "Voter has not been fully verified" });
         }
 
-        const sessionKey = crypto.randomBytes(16).toString('hex');
+        const sessionKey = crypto.randomBytes(16).toString("hex");
 
         sessionStore.set(voterId, sessionKey);
-
         setTimeout(() => {
             sessionStore.delete(voterId);
-        }, 60000); // [check]
+        }, 60000); // Delete session key after 1 minute
 
         const encryptedSessionKey = encryptForEVM(sessionKey, evmId);
-        return res.status(200).json({ sessionKey: encryptedSessionKey });
+        const candidateInformation = await fetchCandidateInfo(voter);
+
+        // Set encrypted session key in cookies
+        res.cookie("sessionKey", encryptedSessionKey, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "Strict",
+            maxAge: 60000, // 1 minute
+        });
+
+        return res.status(200).json({
+            message: "Session established",
+            candidates: candidateInformation,
+        });
 
     } catch (error) {
         console.error("Error during voter login:", error);
         return res.status(500).json({ error: error.message || "Internal Server Error" });
     }
-}
+};
+
 
 /** @evm */ // [clientside]
 /**
