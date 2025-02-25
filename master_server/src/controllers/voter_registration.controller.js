@@ -1,5 +1,5 @@
-import {Voter} from "../models/Voter.js";
-import {EC_Staff} from "../models/EC_Staff.js";
+import { Voter } from "../models/Voter.js";
+import { EC_Staff } from "../models/EC_Staff.js";
 import { EC_Volunteer } from "../models/EC_Volunteer.js";
 import { encryptData, decryptData } from "../utils/crypto.utils.js";
 
@@ -17,11 +17,10 @@ export const handleVoterRegistration = async (req, res) => {
             }
         })
 
-        if(voterExist)
-        {
+        if (voterExist) {
             return res.status(409).json({ message: 'Voter already exists' });
         }
-        const staffMembers = await EC_Staff.findAll();  
+        const staffMembers = await EC_Staff.findAll();
 
         let verifiedStaff = null;
 
@@ -30,7 +29,7 @@ export const handleVoterRegistration = async (req, res) => {
             const decryptedStaffLeft = decryptData(staff.biometric_left);
 
             if (decryptedStaffRight === verifiedByStaff || decryptedStaffLeft === verifiedByStaff) {
-                verifiedStaff = staff;  
+                verifiedStaff = staff;
                 break;
             }
         }
@@ -52,8 +51,7 @@ export const handleVoterRegistration = async (req, res) => {
             }
         }
 
-        if(!verifiedVolunteer)
-        {
+        if (!verifiedVolunteer) {
             return res.status(404).json({ message: 'Volunteer not found for verification.' });
         }
 
@@ -66,9 +64,8 @@ export const handleVoterRegistration = async (req, res) => {
             verifiedByStaff: verifiedStaff.id
         });
 
-        return res.status(201).json({ message: 'Voter created successfully' });
-    }
-    catch (err) {
+        return res.status(201).json({ message: 'Voter created successfully', voter });
+    } catch (err) {
         console.error("Error during voter registration:", err);
         return res.status(500).json({ error: err.message || "Internal Server Error" });
     }
