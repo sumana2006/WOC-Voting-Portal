@@ -1,5 +1,5 @@
 import { Voter } from "../models/Voter.js";
-import { Commitment, Commitments } from "../models/Commitments.js"
+import { Commitment } from "../models/Commitments.js"
 import { decryptData, encryptForEVM } from "../utils/crypto.utils.js";
 import crypto from "crypto";
 
