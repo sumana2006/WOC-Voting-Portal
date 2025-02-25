@@ -17,7 +17,7 @@ export const Candidate = sequelize.define(
         contact: {
             type: DataTypes.NUMBER,
         },
-        positions: {
+        position: {
             type: DataTypes.ENUM(...Object.values(POSITIONS)),
             allowNull: false,
         },
