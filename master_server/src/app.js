@@ -1,5 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser'
 
 // import routes
 import registrationRouter from "./routes/registration.routes.js"
