@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize"
 import { sequelize } from "../db/db.js";
+import { POSITIONS } from "../constants/positions.js";
 
 export const Voter = sequelize.define(
     'Voter',
@@ -19,7 +20,7 @@ export const Voter = sequelize.define(
         biometric_left: {
             type: DataTypes.STRING,
         },
-        verfiedByStudent: {
+        verfiedByVolunteer: {
             type: DataTypes.STRING,
             references: {
                 model: "EC_Volunteer",
@@ -32,7 +33,12 @@ export const Voter = sequelize.define(
                 model: "EC_Staff",
                 key: "id",
             },
-        }
+        },
+        positions: {
+            type: DataTypes.ARRAY(DataTypes.ENUM(...Object.values(POSITIONS))), // Array of positions
+            allowNull: false,
+        },
+
     },
     {
         tableName: 'Voter'
