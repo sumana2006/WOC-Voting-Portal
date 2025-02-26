@@ -6,6 +6,7 @@
 import { POSITIONS } from "../constants/positions";
 import { Candidate } from "../models/Candidate";
 import { EC_Staff } from "../models/EC_Staff";
+import { EC_Volunteer } from "../models/EC_Volunteer";
 
 export const handleCandidateRegistration = async (req, res) => {
     const { id, name, contact, position, biometric, verifiedByStudent, verifiedByStaff } = req.body;
@@ -91,5 +92,6 @@ export const handleCandidateRegistration = async (req, res) => {
  * 0 1 0 0 for id 3
  * 1 0 0 0 for id 4 
  * We may change the corresponding basis to id maps 
- * After registeration process is complete, the "calculateBasis" function is called [make npm script] 
+ * After registeration process is complete, the "calculateBasis" function is called [make function in imdex.js]
+ * 
  */
