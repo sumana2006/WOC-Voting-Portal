@@ -32,13 +32,13 @@ export const decryptData = (encryptedData) => {
 export const decryptFromEVM = (encryptedData, evmId) => {
   try {
     // Construct the key: H(msk || evmId)
-    const key = crypto.createHash("sha256").update(MASTER_SECRET_KEY + evmId).digest();
+    const key = crypto.createHash("sha256").update(process.env.MASTER_SECRET_KEY + evmId).digest();
 
     // Convert the encryptedData from base64 to a buffer
     const encryptedBuffer = Buffer.from(encryptedData, "base64");
 
     // Extract IV (assuming the first 16 bytes store the IV)
-    const iv = encryptedBuffer.slice(0, 16);
+    const iv = Buffer.from(process.env.ENCRYPTION_IV, 'hex');
     const cipherText = encryptedBuffer.slice(16);
 
     // Decrypt using AES-256-CBC
@@ -62,7 +62,7 @@ export const decryptFromEVM = (encryptedData, evmId) => {
 export const encryptForEVM = (data, evmId) => {
   try {
     // Construct the key: H(msk || evmId)
-    const key = crypto.createHash("sha256").update(MASTER_SECRET_KEY + evmId).digest();
+    const key = crypto.createHash("sha256").update(process.env.MASTER_SECRET_KEY + evmId).digest();
 
     // Generate a random IV (Initialization Vector)
     const iv = crypto.randomBytes(16);
