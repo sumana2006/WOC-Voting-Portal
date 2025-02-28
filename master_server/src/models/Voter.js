@@ -1,9 +1,10 @@
-import { DataTypes } from "sequelize"
+import { DataTypes } from "sequelize";
 import { sequelize } from "../db/db.js";
 import { POSITIONS } from "../constants/positions.js";
 
+// Define Voter model
 export const Voter = sequelize.define(
-    'Voter',
+    "Voter",
     {
         voterId: {
             type: DataTypes.STRING,
@@ -27,20 +28,29 @@ export const Voter = sequelize.define(
                 key: "id",
             },
         },
-        verifiedByStaff:{
+        verifiedByStaff: {
             type: DataTypes.STRING,
             references: {
                 model: "EC_Staff",
                 key: "id",
             },
         },
-        positions: {
-            type: DataTypes.ARRAY(DataTypes.ENUM(...Object.values(POSITIONS))), // Array of positions
+        allowedPositions: {
+            type: DataTypes.ARRAY(DataTypes.STRING), // Storing an array of allowed positions
             allowNull: false,
-        },
-
+            defaultValue: [],
+            validate: {
+                isValidPosition(value) {
+                    value.forEach(pos => {
+                        if (!Object.values(POSITIONS).includes(pos)) {
+                            throw new Error(`Invalid position: ${pos}`);
+                        }
+                    });
+                }
+            }
+        }
     },
     {
-        tableName: 'Voter'
+        tableName: "Voter",
     }
-)
+);
