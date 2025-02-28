@@ -21,6 +21,11 @@ export const Commitment = sequelize.define(
         evm: {
             type: DataTypes.STRING,
             allowNull: false,
+            references: {
+                model: EVM, 
+                key: "id",
+            },
+            // onDelete: "CASCADE", // Ensures commitments get deleted if EVM is removed
         },
         commitment: {
             type: DataTypes.TEXT, // Changed from TSVECTOR to TEXT, as TSVECTOR is specific to Postgres full-text search
