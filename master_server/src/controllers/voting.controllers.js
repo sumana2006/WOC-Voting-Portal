@@ -38,6 +38,11 @@ export const handleVoterSession = async (req, res) => {
             return res.status(403).json({ message: "Voter has not been fully verified" });
         }
 
+        // add check for voter.hasVoted
+        if (voter.hasVoted) {
+            return res.status(403).json({ message: "Voter has already voted" });
+        }
+
         const sessionToken = jwt.sign({ voterId }, process.env.JWT_SECRET, { expiresIn: "1m" });
         const candidateInformation = await fetchCandidateInfo(voter);
 
@@ -75,9 +80,23 @@ export const handleVoterSession = async (req, res) => {
 
 export const handleCastVote = async (req, res) => {
     const { voterId } = req; // [middleware]
+
     const { commitments } = req.decryptedData;
 
     try {
+        /**
+        * check voter has voted or not
+        * in voter list, toggle field "has voted"
+        */
+        const voter = await Voter.findOne({ where: { voterId } });
+        if (!voter) {
+            return res.status(404).json({ message: "Voter not found" });
+        }
+
+        if (voter.hasVoted) {
+            return res.status(403).json({ message: "Voter has already cast their vote" });
+        }
+
         for (const vote of commitments) {
             await Commitment.create({
                 positionIndex: vote.positionIndex,
