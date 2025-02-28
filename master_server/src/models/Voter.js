@@ -48,7 +48,12 @@ export const Voter = sequelize.define(
                     });
                 }
             }
-        }
+        },
+        hasVoted: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false, // Initial state, voter hasn't voted
+        },
     },
     {
         tableName: "Voter",
