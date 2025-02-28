@@ -1,9 +1,9 @@
-import { DataTypes } from "sequelize"
+import { DataTypes } from "sequelize";
 import { sequelize } from "../db/db.js";
 import { POSITIONS } from "../constants/positions.js";
 
 export const Candidate = sequelize.define(
-    'Candidate',
+    "Candidate",
     {
         id: {
             type: DataTypes.STRING,
@@ -15,20 +15,16 @@ export const Candidate = sequelize.define(
             allowNull: false,
         },
         contact: {
-            type: DataTypes.NUMBER,
-        },
-        position: {
-            type: DataTypes.ENUM(...Object.values(POSITIONS)),
-            allowNull: false,
+            type: DataTypes.STRING,
         },
         basis: {
             type: DataTypes.STRING,
             unique: true,
         },
-        verfiedByStudent: {
+        verfiedByVolunteer: {
             type: DataTypes.STRING,
             references: {
-                model: "EC_Student",
+                model: "EC_Volunteer",
                 key: "id",
             },
         },
@@ -38,9 +34,16 @@ export const Candidate = sequelize.define(
                 model: "EC_Staff",
                 key: "id",
             },
+        },
+        position: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            validate: {
+                isIn: [Object.values(POSITIONS)], // Ensure position is valid
+            },
         }
     },
     {
-        tableName: 'Candidate'
+        tableName: "Candidate",
     }
-)
+);

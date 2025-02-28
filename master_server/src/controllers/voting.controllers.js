@@ -1,9 +1,8 @@
 import { Voter } from "../models/Voter.js";
 import { Commitment } from "../models/Commitments.js"
 import { decryptData, encryptForEVM } from "../utils/crypto.utils.js";
-import crypto from "crypto";
 import { fetchCandidateInfo } from "../utils/candidate.utils.js";
-
+import jwt from "jsonwebtoken"
 
 // validate user, send session key [controller]
 /**@master_server */
@@ -14,14 +13,10 @@ import { fetchCandidateInfo } from "../utils/candidate.utils.js";
  * * find voter
  * * validate verifiedByVolunteer and verifiedByStaff (all the way to admin)
  * * compare and validate biometrics
- * create random session key
- * store in memory map of voter-session_key
- * start timer for 1 minute (the session key should be deleted exactly after 1 minute)
+ * create random session key (JWT)
  * encrypt with recieved evmId
  * respond with encryption to the frontend
  */
-
-const sessionStore = new Map(); // alternate: External Data Structure like Redis
 
 export const handleVoterSession = async (req, res) => {
     try {
@@ -43,18 +38,15 @@ export const handleVoterSession = async (req, res) => {
             return res.status(403).json({ message: "Voter has not been fully verified" });
         }
 
-        const sessionKey = crypto.randomBytes(16).toString("hex");
+        // add check for voter.hasVoted
+        if (voter.hasVoted) {
+            return res.status(403).json({ message: "Voter has already voted" });
+        }
 
-        sessionStore.set(voterId, sessionKey);
-        setTimeout(() => {
-            sessionStore.delete(voterId);
-        }, 60000); // Delete session key after 1 minute
-
-        const encryptedSessionKey = encryptForEVM(sessionKey, evmId);
+        const sessionToken = jwt.sign({ voterId }, process.env.JWT_SECRET, { expiresIn: "1m" });
         const candidateInformation = await fetchCandidateInfo(voter);
 
-        // Set encrypted session key in cookies
-        res.cookie("sessionKey", encryptedSessionKey, {
+        res.cookie("sessionToken", sessionToken, {
             httpOnly: true,
             secure: true,
             sameSite: "Strict",
@@ -75,7 +67,6 @@ export const handleVoterSession = async (req, res) => {
 
 /** @evm */ // [clientside]
 /**
- * decrypt
  * store session key in local storage (or alt)
  * send with next message and delete
  */
@@ -88,25 +79,36 @@ export const handleVoterSession = async (req, res) => {
  */
 
 export const handleCastVote = async (req, res) => {
-    const { voterId, sessionKey, commitments } = req.decryptedData;
+    const { voterId } = req; // [middleware]
+
+    const { commitments } = req.decryptedData;
+
     try {
-        const storedSessionKey = sessionStore.get(voterId);
-        if (!storedSessionKey || storedSessionKey !== sessionKey) {
-            return res.status(401).json({ message: "Invalid or expired session key" });
+        /**
+        * check voter has voted or not
+        * in voter list, toggle field "has voted"
+        */
+        const voter = await Voter.findOne({ where: { voterId } });
+        if (!voter) {
+            return res.status(404).json({ message: "Voter not found" });
         }
 
-        sessionStore.delete(voterId);
+        if (voter.hasVoted) {
+            return res.status(403).json({ message: "Voter has already cast their vote" });
+        }
 
-        for (const vote of commitments) { // [check]
+        for (const vote of commitments) {
             await Commitment.create({
                 positionIndex: vote.positionIndex,
                 evm: vote.evm,
-                commitment: vote.commitment
+                commitment: vote.commitment,
             });
         }
+
         return res.status(200).json({ message: "Vote cast successfully" });
     } catch (error) {
         console.error("Error during vote casting:", error);
         return res.status(500).json({ error: error.message || "Internal Server Error" });
     }
 };
+

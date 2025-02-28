@@ -10,9 +10,12 @@ export const decryptMiddleware = (req, res, next) => {
     // Assume req.body is an encrypted JSON string.
     const decryptedData = decryptFromEVM(req.body, evmId);
     req.decryptedData = decryptedData;
+    // Meaningless MITM catching
+    // request to EVM health module
     next();
   } catch (error) {
     console.error("Error decrypting data: ", error);
     return res.status(400).json({ message: "Failed to decrypt request data" });
   }
 };
+ 
