@@ -2,13 +2,9 @@ import { DataTypes } from "sequelize";
 import { sequelize } from "../db/db.js";
 
 const EVM = sequelize.define("EVM", {
-    public_key: {
+    id: {
         type: DataTypes.STRING,
         primaryKey: true,
-    },
-    private_key: {
-        type: DataTypes.STRING,
-        allowNull: false,
     },
     room: {
         type: DataTypes.INTEGER,
