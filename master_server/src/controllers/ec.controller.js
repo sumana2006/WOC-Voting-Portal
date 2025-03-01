@@ -1,7 +1,7 @@
 import { EC_Staff } from "../models/EC_Staff.js";
 import { EC_Volunteer } from "../models/EC_Volunteer.js";
 import { encryptData, decryptData } from "../utils/crypto.utils.js";
-import { formatResponse } from "../utils/format_api.utils.js";
+import { formatResponse } from "../utils/formatApiResponse.js";
 
 // take admin biometrics
 export const handleEcStaffRegistration = async (req, res) => {

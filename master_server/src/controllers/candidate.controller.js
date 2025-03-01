@@ -7,7 +7,7 @@ import { POSITIONS } from "../constants/positions.js";
 import { Candidate } from "../models/Candidate.js";
 import { EC_Staff } from "../models/EC_Staff.js";
 import { EC_Volunteer } from "../models/EC_Volunteer.js";
-import { formatResponse } from "../utils/format_api.utils.js";
+import { formatResponse } from "../utils/formatApiResponse.js";
 
 export const handleCandidateRegistration = async (req, res) => {
     const { id, name, contact, position, biometric, verifiedByStudent, verifiedByStaff } = req.body;
