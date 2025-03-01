@@ -41,6 +41,9 @@ export const Candidate = sequelize.define(
             validate: {
                 isIn: [Object.values(POSITIONS)], // Ensure position is valid
             },
+        },
+        imageUrl: {
+            type: DataTypes.STRING,
         }
     },
     {
