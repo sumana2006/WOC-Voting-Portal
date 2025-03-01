@@ -6,6 +6,7 @@ import { EC_Staff } from "./models/EC_Staff.js";
 import { EC_Volunteer } from "./models/EC_Volunteer.js";
 import { Candidate } from "./models/Candidate.js";
 import { Commitment } from "./models/Commitments.js";
+import EVM from "./models/EVM.js";
 
 (async () => {
     try {
@@ -15,6 +16,7 @@ import { Commitment } from "./models/Commitments.js";
         await EC_Volunteer.sync({ alter: true });
         await Candidate.sync({ alter: true })
         await Voter.sync({ alter: true });
+        await EVM.sync({ alter: true });
         await Commitment.sync({ alter: true });
 
         console.log("Tables synchronized successfully!");
