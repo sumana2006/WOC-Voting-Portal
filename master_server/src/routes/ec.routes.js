@@ -1,9 +1,9 @@
 import express from "express";
-import { handleEcStaffRegistration, handleEcVolunteerRegistration} from "../controllers/ec_registration.controller.js";
+import { handleEcStaffRegistration, handleEcVolunteerRegistration} from "../controllers/ec.controller.js";
 
 const router = express.Router();
 
-router.post("/ec_staff", handleEcStaffRegistration);
-router.post("/ec_volunteer", handleEcVolunteerRegistration);
+router.post("/register/staff", handleEcStaffRegistration);
+router.post("/register/volunteer", handleEcVolunteerRegistration);
 
 export default router;
