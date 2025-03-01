@@ -1,5 +1,5 @@
 import EVM from "../models/EVM.js";
-import EC_Staff from "../models/EC_Staff.js";
+import { EC_Staff } from "../models/EC_Staff.js";
 import { encryptData, decryptData } from "../utils/crypto.utils.js";
 import { exec } from "child_process";
 import { v4 as uuidv4 } from "uuid";
