@@ -2,6 +2,7 @@ import { Voter } from "../models/Voter.js";
 import { Commitment } from "../models/Commitments.js"
 import { decryptData, encryptForEVM } from "../utils/crypto.utils.js";
 import { fetchCandidateInfo } from "../utils/candidate.utils.js";
+import { formatResponse } from "../utils/formatApiResponse.js";
 import jwt from "jsonwebtoken"
 
 // validate user, send session key [controller]
@@ -17,35 +18,36 @@ import jwt from "jsonwebtoken"
  * encrypt with recieved evmId
  * respond with encryption to the frontend
  */
-
 export const handleVoterSession = async (req, res) => {
     try {
         const { voterId, biometric_left, biometric_right, evmId } = req.decryptedData;
 
         const voter = await Voter.findOne({ where: { voterId } });
         if (!voter) {
-            return res.status(404).json({ message: "Voter not found" });
+            return res.status(404).json(formatResponse(false, null, 404, "Voter not found."));
         }
 
         const storedRight = decryptData(voter.biometric_right);
         const storedLeft = decryptData(voter.biometric_left);
 
         if (storedRight !== biometric_right || storedLeft !== biometric_left) {
-            return res.status(401).json({ message: "Biometric validation failed" });
+            return res.status(401).json(formatResponse(false, null, 401, "Biometric validation failed."));
         }
 
-        if (!voter.verfiedByVolunteer || !voter.verifiedByStaff) {
-            return res.status(403).json({ message: "Voter has not been fully verified" });
+        if (!voter.verifiedByVolunteer || !voter.verifiedByStaff) {
+            return res.status(403).json(formatResponse(false, null, 403, "Voter has not been fully verified."));
         }
 
-        // add check for voter.hasVoted
+        // Check if the voter has already voted
         if (voter.hasVoted) {
-            return res.status(403).json({ message: "Voter has already voted" });
+            return res.status(403).json(formatResponse(false, null, 403, "Voter has already voted."));
         }
 
+        // Generate session token
         const sessionToken = jwt.sign({ voterId }, process.env.JWT_SECRET, { expiresIn: "1m" });
         const candidateInformation = await fetchCandidateInfo(voter);
 
+        // Store session token in a secure cookie
         res.cookie("sessionToken", sessionToken, {
             httpOnly: true,
             secure: true,
@@ -53,14 +55,14 @@ export const handleVoterSession = async (req, res) => {
             maxAge: 60000, // 1 minute
         });
 
-        return res.status(200).json({
-            message: "Session established",
+        return res.status(200).json(formatResponse(true, {
+            message: "Session established.",
             candidates: candidateInformation,
-        });
+        }, null, null));
 
     } catch (error) {
         console.error("Error during voter login:", error);
-        return res.status(500).json({ error: error.message || "Internal Server Error" });
+        return res.status(500).json(formatResponse(false, null, 500, "Internal Server Error"));
     }
 };
 
@@ -77,26 +79,21 @@ export const handleVoterSession = async (req, res) => {
  * validate session key
  * collect and store commitments
  */
-
 export const handleCastVote = async (req, res) => {
-    const { voterId } = req; // [middleware]
-
-    const { commitments } = req.decryptedData;
-
     try {
-        /**
-        * check voter has voted or not
-        * in voter list, toggle field "has voted"
-        */
+        const { voterId } = req; // Retrieved from middleware
+        const { commitments } = req.decryptedData;
+
         const voter = await Voter.findOne({ where: { voterId } });
         if (!voter) {
-            return res.status(404).json({ message: "Voter not found" });
+            return res.status(404).json(formatResponse(false, null, 404, "Voter not found."));
         }
 
         if (voter.hasVoted) {
-            return res.status(403).json({ message: "Voter has already cast their vote" });
+            return res.status(403).json(formatResponse(false, null, 403, "Voter has already cast their vote."));
         }
 
+        // Store commitments
         for (const vote of commitments) {
             await Commitment.create({
                 positionIndex: vote.positionIndex,
@@ -105,10 +102,14 @@ export const handleCastVote = async (req, res) => {
             });
         }
 
-        return res.status(200).json({ message: "Vote cast successfully" });
+        // Mark voter as voted
+        await voter.update({ hasVoted: true });
+
+        return res.status(200).json(formatResponse(true, { message: "Vote cast successfully." }, null, null));
+
     } catch (error) {
         console.error("Error during vote casting:", error);
-        return res.status(500).json({ error: error.message || "Internal Server Error" });
+        return res.status(500).json(formatResponse(false, null, 500, "Internal Server Error"));
     }
 };
 
