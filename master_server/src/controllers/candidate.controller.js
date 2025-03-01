@@ -3,10 +3,10 @@
  * id, name, contact, position, verifiedByStudent, verifiedByStaff
  */
 
-import { POSITIONS } from "../constants/positions";
-import { Candidate } from "../models/Candidate";
-import { EC_Staff } from "../models/EC_Staff";
-import { EC_Volunteer } from "../models/EC_Volunteer";
+import { POSITIONS } from "../constants/positions.js";
+import { Candidate } from "../models/Candidate.js";
+import { EC_Staff } from "../models/EC_Staff.js";
+import { EC_Volunteer } from "../models/EC_Volunteer.js";
 
 export const handleCandidateRegistration = async (req, res) => {
     const { id, name, contact, position, biometric, verifiedByStudent, verifiedByStaff } = req.body;
