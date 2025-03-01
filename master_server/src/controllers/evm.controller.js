@@ -1,6 +1,6 @@
 import EVM from "../models/EVM.js";
 import EC_Staff from "../models/EC_Staff.js";
-import { encryptData, decryptData } from "../utils/cryptoUtils.js";
+import { encryptData, decryptData } from "../utils/crypto.utils.js";
 import { exec } from "child_process";
 import { v4 as uuidv4 } from "uuid";
 
@@ -16,7 +16,7 @@ import { v4 as uuidv4 } from "uuid";
 const isPortOpen = (ip, port) => {
     return new Promise((resolve) => {
         exec(`nc -z -w2 ${ip} ${port}`, (error) => {
-            resolve(!error); 
+            resolve(!error);
         });
     });
 };
