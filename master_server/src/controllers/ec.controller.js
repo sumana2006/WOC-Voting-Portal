@@ -1,10 +1,11 @@
 import { EC_Staff } from "../models/EC_Staff.js";
 import { EC_Volunteer } from "../models/EC_Volunteer.js";
 import { encryptData, decryptData } from "../utils/crypto.utils.js";
+import { formatResponse } from "../utils/formatApiResponse.js";
 
 // take admin biometrics
-export const handleEcStaffRegistration = async (req,res) => {
-    const {id, name, biometric} = req.body;
+export const handleEcStaffRegistration = async (req, res) => {
+    const { id, name, biometric } = req.body;
     try {
         const staffExist = await EC_Staff.findOne({
             where: {
@@ -13,7 +14,7 @@ export const handleEcStaffRegistration = async (req,res) => {
         });
 
         if (staffExist) {
-            return res.status(409).json({ message: 'Staff already exists' });
+            return res.status(409).json(formatResponse(false, null, 409, "Staff already exists"));
         }
 
         const encryptedRightThumb = encryptData(biometric.right);
@@ -26,14 +27,15 @@ export const handleEcStaffRegistration = async (req,res) => {
             biometric_left: encryptedLeftThumb
         });
 
-        return res.status(201).json({ message: 'Staff created successfully' });
+        return res.status(201).json(formatResponse(true, { message: "Staff created successfully" }, null, null));
     }
     catch (err) {
-        return res.status(500).json({error: err});
+        console.error("Error during EC Staff registration:", err);
+        return res.status(500).json(formatResponse(false, null, 500, err.message || "Internal Server Error"));
     }
 }
 
-export const handleEcVolunteerRegistration = async (req,res) => {
+export const handleEcVolunteerRegistration = async (req, res) => {
     // code here
     const { id, name, contact, biometric, verifiedByStaff } = req.body;
 
@@ -47,12 +49,13 @@ export const handleEcVolunteerRegistration = async (req,res) => {
         });
 
         if (volunteerExist) {
-            return res.status(409).json({ message: 'Volunteer already exists' });
+            return res.status(409).json(formatResponse(false, null, 409, "Volunteer already exists"));
         }
+
         const encryptedRightThumb = encryptData(biometric.right);
         const encryptedLeftThumb = encryptData(biometric.left);
 
-        const staffMembers = await EC_Staff.findAll();  
+        const staffMembers = await EC_Staff.findAll();
 
         let verifiedStaff = null;
 
@@ -61,13 +64,13 @@ export const handleEcVolunteerRegistration = async (req,res) => {
             const decryptedStaffLeft = decryptData(staff.biometric_left);
 
             if (decryptedStaffRight === verifiedByStaff || decryptedStaffLeft === verifiedByStaff) {
-                verifiedStaff = staff;  
+                verifiedStaff = staff;
                 break;
             }
         }
 
         if (!verifiedStaff) {
-            return res.status(404).json({ message: 'Staff not found for verification.' });
+            return res.status(404).json(formatResponse(false, null, 404, "Staff not found for verification."));
         }
 
         // Create a new volunteer
@@ -80,8 +83,9 @@ export const handleEcVolunteerRegistration = async (req,res) => {
             verifiedByStaff: verifiedStaff.id,
         });
 
-        return res.status(201).json({ message: 'Volunteer created successfully' });
+        return res.status(201).json(formatResponse(true, { message: "Volunteer created successfully", volunteer }, null, null));
     } catch (err) {
-        return res.status(500).json({ error: err.message });
+        console.error("Error during EC Volunteer registration:", err);
+        return res.status(500).json(formatResponse(false, null, 500, err.message || "Internal Server Error"));
     }
 }

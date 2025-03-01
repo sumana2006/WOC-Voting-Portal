@@ -3,8 +3,10 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser'
 
 // import routes
-import registrationRouter from "./routes/registration.routes.js"
-import voterRegistrationRouter from "./routes/voter_registration.routes.js"
+import ecRouter from "./routes/ec.routes.js"
+import candidateRouter from "./routes/candidate.routes.js"
+import evmRouter from "./routes/evm.routes.js"
+import voterRouter from "./routes/voter.routes.js"
 import votingRouter from "./routes/voting.routes.js"
 
 const app = express();
@@ -20,8 +22,10 @@ app.get('/', (req, res) => {
   res.send('Hello World bye');
 });
 
-app.use("/api/register", registrationRouter);
-app.use("/api/voter", voterRegistrationRouter);
+app.use("/api/ec", ecRouter);
+app.use("/api/candidate", candidateRouter)
+app.use("/api/voter", voterRouter);
+app.use("/api/evm", evmRouter);
 app.use("/api/vote-cast", votingRouter);
 
 

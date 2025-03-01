@@ -3,10 +3,11 @@
  * id, name, contact, position, verifiedByStudent, verifiedByStaff
  */
 
-import { POSITIONS } from "../constants/positions";
-import { Candidate } from "../models/Candidate";
-import { EC_Staff } from "../models/EC_Staff";
-import { EC_Volunteer } from "../models/EC_Volunteer";
+import { POSITIONS } from "../constants/positions.js";
+import { Candidate } from "../models/Candidate.js";
+import { EC_Staff } from "../models/EC_Staff.js";
+import { EC_Volunteer } from "../models/EC_Volunteer.js";
+import { formatResponse } from "../utils/formatApiResponse.js";
 
 export const handleCandidateRegistration = async (req, res) => {
     const { id, name, contact, position, biometric, verifiedByStudent, verifiedByStaff } = req.body;
@@ -22,7 +23,7 @@ export const handleCandidateRegistration = async (req, res) => {
         })
 
         if (candidateExists) {
-            return res.status(409).json({ message: 'Candidate already registered' });
+            return res.status(409).json(formatResponse(false, null, 409, "Candidate already registered"));
         }
 
         const staffMembers = await EC_Staff.findAll();
@@ -40,7 +41,7 @@ export const handleCandidateRegistration = async (req, res) => {
         }
 
         if (!verifiedStaff) {
-            return res.status(404).json({ message: 'Staff not found for verification.' });
+            return res.status(404).json(formatResponse(false, null, 404, "Staff not found for verification."));
         }
 
         const ecVolunteer = await EC_Volunteer.findAll();
@@ -57,11 +58,11 @@ export const handleCandidateRegistration = async (req, res) => {
         }
 
         if (!verifiedVolunteer) {
-            return res.status(404).json({ message: 'Volunteer not found for verification.' });
+            return res.status(404).json(formatResponse(false, null, 404, "Volunteer not found for verification."));
         }
 
         if (!Object.values(POSITIONS).includes(position)) {
-            return res.status(400).json({ message: "Invalid position selected." });
+            return res.status(400).json(formatResponse(false, null, 400, "Invalid position selected."));
         }
 
         const candidate = await Candidate.create({
@@ -75,11 +76,11 @@ export const handleCandidateRegistration = async (req, res) => {
             verifiedByStaff: verifiedStaff.id
         })
 
-        return res.status(201).json({ message: "Candidate registered successfully", candidate });
+        return res.status(201).json(formatResponse(true, { message: "Candidate registered successfully", candidate }, null, null));
 
     } catch (err) {
         console.error("Error during candidate registration:", err);
-        return res.status(500).json({ error: err.message || "Internal Server Error" });
+        return res.status(500).json(formatResponse(false, null, 500, err.message || "Internal Server Error"));
     }
 }
 
