@@ -22,7 +22,7 @@ services:
       watch:
         - action: sync
           path: ./src
-          target: ./src
+          target: /app/src
           ignore:
             - node_modules/
         - action: rebuild
