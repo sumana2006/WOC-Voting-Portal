@@ -59,16 +59,18 @@ export const handleEcVolunteerRegistration = async (req, res) => {
         const encryptedRightThumb = encryptData(biometric.right);
         const encryptedLeftThumb = encryptData(biometric.left);
 
-        const staffProvided = await EC_Staff.findOne({ where: {
-            id: verifiedByStaff.id,
-        }})
+        const staffProvided = await EC_Staff.findOne({
+            where: {
+                id: verifiedByStaff.id,
+            }
+        })
 
         let verifiedStaff = false;
 
         const decryptedStaffRight = decryptData(staffProvided.biometric_right);
         const decryptedStaffLeft = decryptData(staffProvided.biometric_left)
 
-        if(verifiedByStaff.left === decryptedStaffLeft || verifiedByStaff.right === decryptedStaffRight) {
+        if (verifiedByStaff.left === decryptedStaffLeft || verifiedByStaff.right === decryptedStaffRight) {
             verifiedStaff = true;
         }
 
