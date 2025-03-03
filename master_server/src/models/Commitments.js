@@ -6,24 +6,18 @@ import EVM from "./EVM.js";
 export const Commitment = sequelize.define(
     "Commitment",
     {
-        positions: {
-            type: DataTypes.ARRAY(DataTypes.STRING), // Store positions as an array of strings
+        position: {
+            type: DataTypes.STRING,
             allowNull: false,
             validate: {
-                isValidPosition(value) {
-                    value.forEach(pos => {
-                        if (!Object.values(POSITIONS).includes(pos)) {
-                            throw new Error(`Invalid position: ${pos}`);
-                        }
-                    });
-                }
-            }
+                isIn: [Object.values(POSITIONS)], // Ensure position is valid
+            },
         },
         evm: {
             type: DataTypes.STRING,
             allowNull: false,
             references: {
-                model: EVM, 
+                model: EVM,
                 key: "id",
             },
             // onDelete: "CASCADE", // Ensures commitments get deleted if EVM is removed
