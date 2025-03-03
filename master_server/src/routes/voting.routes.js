@@ -8,7 +8,7 @@ const router = express.Router();
 // router.get("/eligible-positions", voterAuthentication, getEligibleCandidates);
 // router.post("/voter-commitment", voterAuthentication, storingCommitment);
 
-router.post('/login', decryptMiddleware, handleVoterSession);
-router.post('/cast', decryptMiddleware, sessionValidationMW, handleCastVote)
+router.post('/login', handleVoterSession); // decryptMiddleware,
+router.post('/cast', decryptMiddleware, sessionValidationMW, handleCastVote) // decryptMiddleware
 
 export default router;
