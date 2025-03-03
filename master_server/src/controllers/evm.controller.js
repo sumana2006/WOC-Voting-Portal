@@ -21,15 +21,20 @@ export const handleEvmRegistration = async (req, res) => {
     const { room, verifiedByStaff, biometric } = req.body;
     const ip = req.ip; // Extract IP from request
 
-    if (!room || !port || !verifiedByStaff || !biometric) {
+    console.log(req.body)
+
+    if (!room || !verifiedByStaff || !biometric) {
         return res.status(400).json(formatResponse(false, null, 400, "Missing required fields."));
     }
 
     try {
         // Find staff and verify biometric
         const staff = await EC_Staff.findOne({ where: { id: verifiedByStaff } });
+        const staffs = await EC_Staff.findAll();
+        console.log(staffs)
 
         if (!staff) {
+            console.log(verifiedByStaff);
             return res.status(404).json(formatResponse(false, null, 404, "Staff not found for verification."));
         }
 
