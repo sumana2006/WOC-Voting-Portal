@@ -8,14 +8,15 @@ import { Candidate } from "../models/Candidate.js";
  */
 export const fetchCandidateInfo = async (voter) => {
     try {
-        if (!voter || !Array.isArray(voter.positions)) {
+
+        if (!voter || !Array.isArray(voter.allowedPositions)) {
             throw new Error("Invalid voter object");
         }
 
         // Fetch candidates matching the voter's eligible positions
         const candidates = await Candidate.findAll({
             where: {
-                position: voter.positions,
+                position: voter.allowedPositions,
             },
         });
 
