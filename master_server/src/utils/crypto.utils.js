@@ -33,19 +33,22 @@ export const decryptFromEVM = (encryptedData, evmId) => {
   try {
     // Construct the key: H(msk || evmId)
     const key = crypto.createHash("sha256").update(process.env.MASTER_SECRET_KEY + evmId).digest();
-
+    console.log("key = ", key);
     // Convert the encryptedData from base64 to a buffer
     const encryptedBuffer = Buffer.from(encryptedData, "base64");
 
     // Extract IV (assuming the first 16 bytes store the IV)
     const iv = Buffer.from(process.env.ENCRYPTION_IV, 'hex');
     const cipherText = encryptedBuffer.slice(16);
-
+    console.log("ct = ", cipherText);
     // Decrypt using AES-256-CBC
     const decipher = crypto.createDecipheriv("aes-256-cbc", key, iv);
+    console.log("pt = ", decipher);
     let decrypted = decipher.update(cipherText);
     decrypted = Buffer.concat([decrypted, decipher.final()]);
+    console.log("decrypted = ", decrypted.toString("utf-8"));
 
+    // console.log("ppp = ", JSON.parse(decrypted.toString("utf-8")));
     // Convert to a readable format (assuming it's JSON)
     return JSON.parse(decrypted.toString("utf-8"));
   } catch (error) {
