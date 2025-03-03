@@ -7,10 +7,11 @@ import { POSITIONS } from "../constants/positions.js";
 import { Candidate } from "../models/Candidate.js";
 import { EC_Staff } from "../models/EC_Staff.js";
 import { EC_Volunteer } from "../models/EC_Volunteer.js";
+import { decryptData, encryptData } from "../utils/crypto.utils.js";
 import { formatResponse } from "../utils/formatApiResponse.js";
 
 export const handleCandidateRegistration = async (req, res) => {
-    const { id, name, contact, position, biometric, verifiedByStudent, verifiedByStaff } = req.body;
+    const { id, name, contact, position, biometric, verifiedByVolunteer, verifiedByStaff } = req.body;
 
     try {
         const encryptedRightThumb = encryptData(biometric.right);
@@ -25,36 +26,48 @@ export const handleCandidateRegistration = async (req, res) => {
         if (candidateExists) {
             return res.status(409).json(formatResponse(false, null, 409, "Candidate already registered"));
         }
+        // Verify EC Staff biometric
 
-        const staffMembers = await EC_Staff.findAll();
-
-        let verifiedStaff = null;
-
-        for (const staff of staffMembers) {
-            const decryptedStaffRight = decryptData(staff.biometric_right);
-            const decryptedStaffLeft = decryptData(staff.biometric_left);
-
-            if (decryptedStaffRight === verifiedByStaff || decryptedStaffLeft === verifiedByStaff) {
-                verifiedStaff = staff;
-                break;
+        const staffProvided = await EC_Staff.findOne({
+            where: {
+                id: verifiedByStaff.id,
             }
+        })
+
+        if (!staffProvided)
+            return res.status(404).json(formatResponse(false, null, 404, "Staff not found"));
+
+        let verifiedStaff = false;
+
+        const decryptedStaffRight = decryptData(staffProvided.biometric_right);
+        const decryptedStaffLeft = decryptData(staffProvided.biometric_left)
+
+        if (verifiedByStaff.left === decryptedStaffLeft || verifiedByStaff.right === decryptedStaffRight) {
+            verifiedStaff = true;
         }
 
         if (!verifiedStaff) {
             return res.status(404).json(formatResponse(false, null, 404, "Staff not found for verification."));
         }
 
-        const ecVolunteer = await EC_Volunteer.findAll();
-        let verifiedVolunteer = null;
 
-        for (const volunteer of ecVolunteer) {
-            const decryptedVolunteerRight = decryptData(volunteer.biometric_right);
-            const decryptedVolunteerLeft = decryptData(volunteer.biometric_left);
-
-            if (decryptedVolunteerRight === verifiedByStudent || decryptedVolunteerLeft === verifiedByStudent) {
-                verifiedVolunteer = volunteer;
-                break;
+        // Verify EC Volunteer biometric
+        const volunteerProvided = await EC_Volunteer.findOne({
+            where: {
+                id: verifiedByVolunteer.id,
             }
+        })
+
+        if (!volunteerProvided)
+            return res.status(404).json(formatResponse(false, null, 404, "Volunteer not found"));
+
+        let verifiedVolunteer = false;
+
+        const decryptedVolunteerRight = decryptData(volunteerProvided.biometric_right);
+        const decryptedVolunteerLeft = decryptData(volunteerProvided.biometric_left)
+
+        if (verifiedByVolunteer.left === decryptedVolunteerLeft || verifiedByVolunteer.right === decryptedVolunteerRight) {
+            verifiedVolunteer = true;
         }
 
         if (!verifiedVolunteer) {
@@ -72,8 +85,8 @@ export const handleCandidateRegistration = async (req, res) => {
             position: position,
             biometric_right: encryptedRightThumb,
             biometric_left: encryptedLeftThumb,
-            verfiedByStudent: verifiedVolunteer.id,
-            verifiedByStaff: verifiedStaff.id
+            verfiedByVolunteer: verifiedByVolunteer.id,
+            verifiedByStaff: verifiedByStaff.id
         })
 
         return res.status(201).json(formatResponse(true, { message: "Candidate registered successfully", candidate }, null, null));

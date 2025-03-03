@@ -20,12 +20,14 @@ import jwt from "jsonwebtoken"
  */
 export const handleVoterSession = async (req, res) => {
     try {
-        const { voterId, biometric_left, biometric_right, evmId } = req.decryptedData;
+        const { voterId, biometric_left, biometric_right } = req.body; // will be replaced by req.decryptedData 
 
         const voter = await Voter.findOne({ where: { voterId } });
         if (!voter) {
             return res.status(404).json(formatResponse(false, null, 404, "Voter not found."));
         }
+
+        console.log("voter = ", voter);
 
         const storedRight = decryptData(voter.biometric_right);
         const storedLeft = decryptData(voter.biometric_left);
@@ -44,7 +46,7 @@ export const handleVoterSession = async (req, res) => {
         }
 
         // Generate session token
-        const sessionToken = jwt.sign({ voterId }, process.env.JWT_SECRET, { expiresIn: "1m" });
+        const sessionToken = jwt.sign({ voterId }, process.env.JWT_SECRET, { expiresIn: "5m" }); // change to one minute
         const candidateInformation = await fetchCandidateInfo(voter);
 
         // Store session token in a secure cookie
@@ -52,11 +54,12 @@ export const handleVoterSession = async (req, res) => {
             httpOnly: true,
             secure: true,
             sameSite: "Strict",
-            maxAge: 60000, // 1 minute
+            maxAge: 300000, // 1 minute
         });
 
         return res.status(200).json(formatResponse(true, {
             message: "Session established.",
+            sessionToken: sessionToken, // for now only [testing, postman]
             candidates: candidateInformation,
         }, null, null));
 
@@ -82,7 +85,7 @@ export const handleVoterSession = async (req, res) => {
 export const handleCastVote = async (req, res) => {
     try {
         const { voterId } = req; // Retrieved from middleware
-        const { commitments } = req.decryptedData;
+        const { commitments } = req.body;
 
         const voter = await Voter.findOne({ where: { voterId } });
         if (!voter) {
@@ -94,12 +97,14 @@ export const handleCastVote = async (req, res) => {
         }
 
         // Store commitments
-        for (const vote of commitments) {
-            await Commitment.create({
-                positionIndex: vote.positionIndex,
-                evm: vote.evm,
-                commitment: vote.commitment,
+        for (const commitment of commitments) {
+            const newCommit = await Commitment.create({
+                position: commitment.position,
+                evm: req.evm.id,
+                commitment: commitment.commitment,
             });
+
+            console.log("New Commitment Created = ", newCommit);
         }
 
         // Mark voter as voted

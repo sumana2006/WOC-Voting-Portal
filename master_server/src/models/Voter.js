@@ -21,7 +21,7 @@ export const Voter = sequelize.define(
         biometric_left: {
             type: DataTypes.STRING,
         },
-        verfiedByVolunteer: {
+        verifiedByVolunteer: {
             type: DataTypes.STRING,
             references: {
                 model: "EC_Volunteer",
@@ -38,7 +38,7 @@ export const Voter = sequelize.define(
         allowedPositions: {
             type: DataTypes.ARRAY(DataTypes.STRING), // Storing an array of allowed positions
             allowNull: false,
-            defaultValue: [],
+            defaultValue: ["general_secretary_ss"],
             validate: {
                 isValidPosition(value) {
                     value.forEach(pos => {
@@ -54,6 +54,9 @@ export const Voter = sequelize.define(
             allowNull: false,
             defaultValue: false, // Initial state, voter hasn't voted
         },
+        imageUrl: {
+            type: DataTypes.STRING,
+        }
     },
     {
         tableName: "Voter",

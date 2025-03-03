@@ -20,7 +20,7 @@ import EVM from "./models/EVM.js";
         await Commitment.sync({ alter: true });
 
         console.log("Tables synchronized successfully!");
-        await sequelize.sync({ force: true }); // Sync the database and create tables
+        await sequelize.sync({ alter: true }); // Sync the database and create tables
 
         // Start the server
         const PORT = process.env.PORT || 5000;

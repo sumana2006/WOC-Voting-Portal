@@ -14,14 +14,6 @@ const EVM = sequelize.define("EVM", {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    port: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        validate: {
-            min: 1,
-            max: 65535, 
-        },
-    },
     health: {
         type: DataTypes.INTEGER,
         allowNull: false, 

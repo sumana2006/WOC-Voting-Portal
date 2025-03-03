@@ -3,6 +3,6 @@ import { handleCandidateRegistration } from "../controllers/candidate.controller
 
 const router = express.Router();
 
-router.post("/candidate_registration", handleCandidateRegistration);
+router.post("/register", handleCandidateRegistration);
 
 export default router;
