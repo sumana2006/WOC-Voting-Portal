@@ -30,7 +30,7 @@ services:
           path: package.json
 
   postgres:
-    image: postgres:15
+    image: "bitnami/postgresql:latest"
     container_name: postgres_container
     restart: unless-stopped
     ports:
