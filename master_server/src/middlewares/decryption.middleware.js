@@ -1,17 +1,29 @@
+import EVM from "../models/EVM.js";
 import { decryptFromEVM } from "../utils/crypto.utils.js";
 
-export const decryptMiddleware = (req, res, next) => {
+export const decryptMiddleware = async (req, res, next) => {
   try {
     // Get evmID from headers
     const evmId = req.headers['x-evm-id'];
     if (!evmId) {
       return res.status(400).json({ message: "Missing evmId in headers" });
     }
-    console.log("req.body.data = ", req.body.data);
+    console.log("req.body = ", req.body);
+    const evm = await EVM.findOne({
+      where: {
+        id: evmId,
+      }
+    })
+
+    if (!evm) {
+      return res.status(404).json({ message: "EVM not found" });
+    }
+
+    req.evm = evm;
     // Assume req.body is an encrypted JSON string.
-    const decryptedData = decryptFromEVM(req.body.data, evmId);
-    console.log("decryptedData = ", decryptedData);
-    req.decryptedData = decryptedData;
+    // const decryptedData = decryptFromEVM(req.body.data, evmId);
+    // console.log("decryptedData = ", decryptedData);
+    // req.decryptedData = decryptedData;
     // Meaningless MITM catching
     // request to EVM health module
     next();
@@ -20,4 +32,3 @@ export const decryptMiddleware = (req, res, next) => {
     return res.status(400).json({ message: "Failed to decrypt request data" });
   }
 };
- 
