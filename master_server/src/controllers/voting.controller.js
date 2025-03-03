@@ -20,7 +20,7 @@ import jwt from "jsonwebtoken"
  */
 export const handleVoterSession = async (req, res) => {
     try {
-        const { voterId, biometric_left, biometric_right, evmId } = req.decryptedData;
+        const { voterId, biometric_left, biometric_right } = req.decryptedData;
 
         const voter = await Voter.findOne({ where: { voterId } });
         if (!voter) {
@@ -44,7 +44,7 @@ export const handleVoterSession = async (req, res) => {
         }
 
         // Generate session token
-        const sessionToken = jwt.sign({ voterId }, process.env.JWT_SECRET, { expiresIn: "1m" });
+        const sessionToken = jwt.sign({ voterId }, process.env.JWT_SECRET, { expiresIn: "5m" });
         const candidateInformation = await fetchCandidateInfo(voter);
 
         // Store session token in a secure cookie
@@ -52,11 +52,12 @@ export const handleVoterSession = async (req, res) => {
             httpOnly: true,
             secure: true,
             sameSite: "Strict",
-            maxAge: 60000, // 1 minute
+            maxAge: 300000, // 1 minute
         });
 
         return res.status(200).json(formatResponse(true, {
             message: "Session established.",
+            sessionToken: sessionToken, // for now only [testing, postman]
             candidates: candidateInformation,
         }, null, null));
 
