@@ -1,4 +1,4 @@
-# WOC-IITJ-Voting
+# WOC-Voting-Portal
 The Official Repository of Voting Portal Project done in Winter of Code
 Requirements
 1. Prerequisites:
@@ -16,12 +16,12 @@ Setup Steps -->
 3. Clone the Repository:
 
 Provide the command:
-git clone https://github.com/Shivanshu-Verma/WOC-IITJ-Voting.git
+git clone https://github.com/Shivanshu-Verma/WOC-Voting-Portal.git
 
 4. Install Dependencies:
 
 Navigate to the project directory:
-cd WOC-IITJ-Voting
+cd WOC-Voting-Portal
 
 
 5. Configure the environment: 
