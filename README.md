@@ -1,5 +1,5 @@
 # WOC-IITJ-Voting
-The Official Repository of IITJ Voting Project done in Winter of Code
+The Official Repository of Voting Portal Project done in Winter of Code
 Requirements
 1. Prerequisites:
 
