@@ -16,11 +16,50 @@
             background-color: #f5f7fa;
             color: #333;
             line-height: 1.6;
-            padding: 20px;
+            padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
+        }
+
+        /* Header Bar */
+        .header-bar {
+            background-color: #4da6ff; /* Deep blue color */
+            color: white;
+            width: 100%;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: center; /* Center the content horizontally */
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            max-width: 1200px; /* Limit the width for larger screens */
+            width: 100%;
+            justify-content: center; /* Center the logo and text */
+        }
+
+        .header-bar img {
+            height: 60px;
+            margin-right: 20px;
+        }
+
+        .header-bar h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        /* Content Container */
+        .content {
+            padding: 20px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         /* Main Title */
@@ -70,7 +109,7 @@
 
         /* Submit Button */
         button[type="submit"] {
-            background-color: #3498db;
+            background-color: #4da6ff;
             color: white;
             border: none;
             padding: 15px 30px;
@@ -89,6 +128,18 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
+            .header-bar {
+                padding: 10px 15px;
+            }
+
+            .header-bar img {
+                height: 40px;
+            }
+
+            .header-bar h2 {
+                font-size: 1.2rem;
+            }
+
             #registerForm {
                 padding: 30px 20px;
             }
@@ -109,27 +160,37 @@
 </head>
 
 <body>
-    <h1>Register EC Staff</h1>
+    <!-- Header Bar -->
+    <div class="header-bar">
+        <div class="header-content">
+            <img src="../assets/IITJ_Logo.png" alt="IIT Jodhpur Logo">
+            <h2>Indian Institute of Technology, Jodhpur</h2>
+        </div>
+    </div>
 
-    <form id="registerForm">
-        <label for="id">Staff ID:</label>
-        <input type="text" id="id" name="id" required>
-        <br>
+    <div class="content">
+        <h1>Register EC Staff</h1>
 
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required>
-        <br>
+        <form id="registerForm">
+            <label for="id">Staff ID:</label>
+            <input type="text" id="id" name="id" required>
+            <br>
 
-        <label for="right">Right Thumb Biometric:</label>
-        <input type="text" id="right" name="biometric_right" required>
-        <br>
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            <br>
 
-        <label for="left">Left Thumb Biometric:</label>
-        <input type="text" id="left" name="biometric_left" required>
-        <br>
+            <label for="right">Right Thumb Biometric:</label>
+            <input type="text" id="right" name="biometric_right" required>
+            <br>
 
-        <button type="submit">Register</button>
-    </form>
+            <label for="left">Left Thumb Biometric:</label>
+            <input type="text" id="left" name="biometric_left" required>
+            <br>
+
+            <button type="submit">Register</button>
+        </form>
+    </div>
 
     <script>
         document.getElementById("registerForm").addEventListener("submit", async function (event) {
@@ -171,3 +232,14 @@
 </body>
 
 </html>
+
+
+
+
+
+
+
+
+
+
+
